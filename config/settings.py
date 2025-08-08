@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +21,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-we5-m6t3ny%@m6^-)rj-mxc*@5ukb$g@tlq94jx=21pa!szdi9'
+SECRET_KEY = os.getenv(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-we5-m6t3ny%@m6^-)rj-mxc*@5ukb$g@tlq94jx=21pa!szdi9'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = []
+_allowed = []
+_env_allowed = os.getenv('ALLOWED_HOSTS')
+if _env_allowed:
+    _allowed = [host.strip() for host in _env_allowed.split(',') if host.strip()]
+if os.getenv('HEROKU_APP_NAME'):
+    _allowed.append(f"{os.getenv('HEROKU_APP_NAME')}.herokuapp.com")
+ALLOWED_HOSTS = _allowed or ['*']
 
 
 # Application definition
@@ -42,6 +52,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,6 +92,10 @@ DATABASES = {
     }
 }
 
+# Use DATABASE_URL if present (e.g., Heroku Postgres)
+if os.getenv('DATABASE_URL'):
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -116,7 +131,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# WhiteNoise for static files in production
+STORAGES = {
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -124,5 +147,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-RAZOR_KEY_ID = 'rzp_test_0YycOcQXiT3ny4'
-RAZOR_KEY_SECRET = '0OPeOTwIjijpk4KqmOvPinNw'
+RAZOR_KEY_ID = os.getenv('RAZOR_KEY_ID', 'rzp_test_0YycOcQXiT3ny4')
+RAZOR_KEY_SECRET = os.getenv('RAZOR_KEY_SECRET', '0OPeOTwIjijpk4KqmOvPinNw')
