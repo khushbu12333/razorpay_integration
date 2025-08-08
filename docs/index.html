@@ -42,16 +42,18 @@
       </div>
     </div>
 
-    <!-- Razorpay Payment Button loader (works without backend). Provide a Payment Button ID via ?button=pl_XXXX -->
+    <!-- Razorpay Payment Button loader (works without backend) -->
+    <script src="./button-id.js"></script>
     <script>
       (function() {
         const params = new URLSearchParams(window.location.search);
-        const buttonId = params.get('button');
+        const urlButtonId = params.get('button');
+        const buttonId = urlButtonId || (window.RAZORPAY_PAYMENT_BUTTON_ID || '').trim();
         if (!buttonId) {
           document.getElementById('fallback-btn').style.display = 'block';
           const note = document.createElement('div');
           note.className = 'links';
-          note.innerHTML = "Set your Razorpay Payment Button ID via '?button=pl_XXXX' in the URL (Dashboard → Payment Button).";
+          note.innerHTML = "Set your Razorpay Payment Button ID via '?button=pl_XXXX' in the URL, or edit 'docs/button-id.js'.";
           document.querySelector('.btn_container').appendChild(note);
           return;
         }
