@@ -27,7 +27,10 @@
         This page is served by GitHub Pages and cannot run the Django backend required to create Razorpay orders and capture payments. To use the full flow, run the Django server locally or deploy the backend (Render/Railway/Heroku/etc.) and point the frontend to it.
       </div>
       <div class="btn_container">
-        <button class="btn" id="pay-btn" disabled>Donate (disabled in static preview)</button>
+        <div id="rzp-button-container"></div>
+        <div id="fallback-btn" style="display:none">
+          <button class="btn" disabled>Donate (configure Payment Button)</button>
+        </div>
         <div class="links">
           <div>
             Backend quickstart: run <code>python manage.py runserver</code> and open <a href="http://127.0.0.1:8000/" target="_blank" rel="noopener">http://127.0.0.1:8000/</a>
@@ -39,11 +42,25 @@
       </div>
     </div>
 
-    <!-- Razorpay's Javascript (not used in static preview) -->
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!-- Razorpay Payment Button loader (works without backend). Provide a Payment Button ID via ?button=pl_XXXX -->
     <script>
-      // This is a static preview only. The real page is rendered by Django with runtime values.
-      // For production, host a backend endpoint that returns an order_id and initialise Razorpay with it.
+      (function() {
+        const params = new URLSearchParams(window.location.search);
+        const buttonId = params.get('button');
+        if (!buttonId) {
+          document.getElementById('fallback-btn').style.display = 'block';
+          const note = document.createElement('div');
+          note.className = 'links';
+          note.innerHTML = "Set your Razorpay Payment Button ID via '?button=pl_XXXX' in the URL (Dashboard → Payment Button).";
+          document.querySelector('.btn_container').appendChild(note);
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://checkout.razorpay.com/v1/payment-button.js';
+        script.setAttribute('data-payment_button_id', buttonId);
+        script.async = true;
+        document.getElementById('rzp-button-container').appendChild(script);
+      })();
     </script>
   </body>
   </html>
