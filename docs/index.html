@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Razorpay Integration (Static Preview)</title>
+    <style>
+      * { box-sizing: border-box; padding: 0; margin: 0; font-family: cursive; }
+      html, body { height: 100%; }
+      body { background-color: #f1f5f8; display: flex; justify-content: center; align-items: center; }
+      .card { background-color: white; padding: 25px; border: 1px solid #bbb; border-radius: 5px; box-shadow: 1px 1px 10px 0px rgb(0 0 0 / 25%); max-width: 520px; }
+      .title { text-align: center; letter-spacing: 1px; }
+      .muted { color: #8e7f7f; display: block; margin: 10px 0 14px; text-align: center; }
+      .note { background: #fff7d6; border: 1px solid #ffe58f; color: #614700; padding: 10px 12px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; }
+      .btn_container { padding: 20px; text-align: center; }
+      .btn { border-radius: 4px; cursor: not-allowed; padding: 6px 10px; background-color: #ccc; color: #666; font-size: 1.1em; font-weight: 600; letter-spacing: 1px; border: none; }
+      .links { font-size: 14px; margin-top: 8px; text-align: center; }
+      .links a { color: #1677ff; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1 class="title">Buy Me a Chai</h1>
+      <small class="muted">Static preview for GitHub Pages</small>
+      <div class="note">
+        This page is served by GitHub Pages and cannot run the Django backend required to create Razorpay orders and capture payments. To use the full flow, run the Django server locally or deploy the backend (Render/Railway/Heroku/etc.) and point the frontend to it.
+      </div>
+      <div class="btn_container">
+        <button class="btn" id="pay-btn" disabled>Donate (disabled in static preview)</button>
+        <div class="links">
+          <div>
+            Backend quickstart: run <code>python manage.py runserver</code> and open <a href="http://127.0.0.1:8000/" target="_blank" rel="noopener">http://127.0.0.1:8000/</a>
+          </div>
+          <div>
+            Repository: <a href="https://github.com/khushbu12333/razorpay_integration" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Razorpay's Javascript (not used in static preview) -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+      // This is a static preview only. The real page is rendered by Django with runtime values.
+      // For production, host a backend endpoint that returns an order_id and initialise Razorpay with it.
+    </script>
+  </body>
+  </html>
+
